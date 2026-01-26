@@ -25,3 +25,10 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Vite cache
+.vite/
+
+
+# Scratch files
+test.js
