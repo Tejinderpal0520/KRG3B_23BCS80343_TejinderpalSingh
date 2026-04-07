@@ -1,6 +1,5 @@
 package com.healthHub.dto;
 
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,30 +13,13 @@ public class PatientDTO {
 
     @Min(value = 1, message = "Age must be greater than 0")
     private int age;
-    @NotBlank(message = "field should not be empty")
+
+    @NotBlank(message = "Disease field should not be empty")
     private String disease;
 
-    public String getName() {
-        return name;
-    }
+    @NotBlank(message = "Email is required")
+    private String email;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getDisease() {
-        return disease;
-    }
-
-    public void setDisease(String disease) {
-        this.disease = disease;
-    }
+    @NotNull(message = "Doctor ID is required")
+    private Long doctorId;
 }

@@ -13,15 +13,19 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/v1/patient")
+@RequestMapping("/patients")
 public class PatientController {
-    PatientService patientService;
-    public PatientController(PatientService patientService){
+
+    private final PatientService patientService;
+
+    public PatientController(PatientService patientService) {
         this.patientService = patientService;
     }
+
     @PostMapping
     public ResponseEntity<?> createPatient(@Valid @RequestBody PatientDTO patientDTO,
-                                           BindingResult result){
+                                           BindingResult result) {
+
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             result.getFieldErrors().forEach(error ->
@@ -29,21 +33,18 @@ public class PatientController {
             );
             return ResponseEntity.badRequest().body(errors);
         }
-        PatientDTO dto =  patientService.createPatient(patientDTO);
-     return ResponseEntity.ok(dto);
+
+        PatientDTO savedPatient = patientService.createPatient(patientDTO);
+        return ResponseEntity.ok(savedPatient);
     }
-    // API URL   // GET http://localhost:8080/v1/patient
+
     @GetMapping
-    public List<Patient> getAllPatients(){
-        return patientService.getAllPatients();
+    public ResponseEntity<List<Patient>> getAllPatients() {
+        return ResponseEntity.ok(patientService.getAllPatients());
     }
+
     @GetMapping("/disease")
-    public List<Patient> getPatient(@RequestParam String disease){
-        return patientService.findByDisease(disease);
+    public ResponseEntity<List<Patient>> getPatientByDisease(@RequestParam String disease) {
+        return ResponseEntity.ok(patientService.findByDisease(disease));
     }
-
-
-
-
-
 }

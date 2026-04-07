@@ -1,38 +1,30 @@
 package com.healthHub.controller;
 
-import com.healthHub.repository.AppointmentRepository;
-import com.stripe.model.PaymentIntent;
-import com.stripe.param.PaymentIntentCreateParams;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.healthHub.dto.PaymentRequest;
+import com.healthHub.service.PaymentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@CrossOrigin("http://localhost:5173")
 @RestController
 @RequestMapping("/api/payment")
+@CrossOrigin(origins = "http://localhost:5173")
 public class PaymentController {
 
-    @PostMapping("/create-payment-intent")
-    public ResponseEntity<?> createPaymentIntent(@RequestBody Map<String, Object> data) throws Exception {
-        System.out.println("request recieved ************** ");
-        Long amount = Long.parseLong(data.get("amount").toString());
+    private final PaymentService paymentService;
 
-        PaymentIntentCreateParams params =
-                PaymentIntentCreateParams.builder()
-
-                        .setAmount(amount * 100) // paise
-                        .setCurrency("inr")
-                        .build();
-
-        PaymentIntent intent = PaymentIntent.create(params);
-        System.out.println(intent.getStatus());
-
-        return ResponseEntity.ok(Map.of(
-                "clientSecret", intent.getClientSecret()
-        ));
+    public PaymentController(PaymentService paymentService) {
+        this.paymentService = paymentService;
     }
 
-
+    @PostMapping("/create-payment-intent")
+    public ResponseEntity<?> createPaymentIntent(@RequestBody PaymentRequest request) {
+        try {
+            Map<String, String> response = paymentService.createPaymentIntent(request.getAmount());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
